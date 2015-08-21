@@ -1,0 +1,18 @@
+{
+  "name": "trie",
+  "version": "0.0.0",
+  "description": "Trie in JavaScript",
+  "main": "src/trie.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha tests"
+  },
+  "author": "Shane Tomlinson <shane@shanetomlinson.com>",
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5"
+  }
+}
