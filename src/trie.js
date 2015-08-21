@@ -3,11 +3,15 @@ function isString(word) {
   return Object.prototype.toString.call(word) === '[object String]';
 }
 
-var TrieNode = {
-};
+function TrieNode (letter) {
+  this.children = {};
+  this.letter = letter;
+}
 
 var Trie = {
-  insert: function (word) {
+  _root: null,
+
+  insert: function (word, root, value) {
     if (! isString(word)) {
       throw new TypeError('word must be a string');
     }
@@ -17,25 +21,28 @@ var Trie = {
     }
 
     if (! this._root) {
-      this._root = {};
+      this._root = new TrieNode();
     }
 
-    var currNode = this._root;
-    var length = word.length;
-    for (var i = 0; i < length; ++i) {
-      var letter = word.charAt(i);
-      if (! (letter in currNode)) {
-        var newNode = Object.create(TrieNode);
-        newNode.letter = letter;
-        currNode[letter] = newNode;
-      }
-      currNode = currNode[letter];
+    root = root || this._root;
+    value = value || word;
+
+    var letter = word.charAt(0);
+    var nextNode = root.children[letter];
+    if (! nextNode) {
+      nextNode = new TrieNode(letter);
+      root.children[letter] = nextNode;
     }
 
-    currNode.leaf = true;
+    if (word.length === 1) {
+      nextNode.value = value;
+    } else {
+      var rest = word.slice(1);
+      this.insert(rest, nextNode, value);
+    }
   },
 
-  find: function (word) {
+  find: function (word, root) {
     if (! isString(word)) {
       throw new TypeError('word must be a string');
     }
@@ -48,16 +55,40 @@ var Trie = {
       return false;
     }
 
-    var currNode = this._root;
-    var length = word.length;
-    for (var i = 0; i < length; ++i) {
-      var letter = word.charAt(i);
-      if (! (letter in currNode)) {
-        return false;
-      }
-      currNode = currNode[letter];
+    root = root || this._root;
+
+    var letter = word.charAt(0);
+    var nextNode = root.children[letter];
+    if (! nextNode) {
+      return false;
     }
-    return !! currNode.leaf;
+
+    if (word.length === 1) {
+      return !! nextNode.value;
+    } else {
+      var rest = word.slice(1);
+      return this.find(rest, nextNode);
+    }
+  },
+
+  traverse: function (accumulator, root) {
+    if (! this._root) {
+      return [];
+    }
+
+    accumulator = accumulator || [];
+    root = root || this._root;
+
+    if (root.value) {
+      accumulator.push(root.value);
+    }
+
+    for (var letter in root.children) {
+      var nextNode = root.children[letter];
+      this.traverse(accumulator, nextNode);
+    }
+
+    return accumulator;
   }
 };
 

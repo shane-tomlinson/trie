@@ -20,6 +20,7 @@ describe('Trie', function () {
       trie.insert('a');
       trie.insert('aardvaark');
       trie.insert('bro');
+      trie.insert('bromance');
       trie.insert('brother');
 
       assert.isTrue(trie.find('a'));
@@ -30,10 +31,29 @@ describe('Trie', function () {
       assert.isFalse(trie.find('aardvaars'));
 
       assert.isTrue(trie.find('bro'));
+      assert.isTrue(trie.find('bromance'));
       assert.isTrue(trie.find('brother'));
       assert.isFalse(trie.find('b'));
       assert.isFalse(trie.find('brot'));
       assert.isFalse(trie.find('brothers'));
+    });
+  });
+
+  describe('traverse', function () {
+    it('returns all items in the list', function () {
+      trie.insert('bro');
+      trie.insert('aardvaark');
+      trie.insert('a');
+      trie.insert('brother');
+      trie.insert('bromance');
+
+      var results = trie.traverse();
+      assert.equal(results.length, 5);
+      assert.notEqual(results.indexOf('a'), -1);
+      assert.notEqual(results.indexOf('aardvaark'), -1);
+      assert.notEqual(results.indexOf('bro'), -1);
+      assert.notEqual(results.indexOf('brother'), -1);
+      assert.notEqual(results.indexOf('bromance'), -1);
     });
   });
 });
