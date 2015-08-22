@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha tests"
+    "test": "iojs node_modules/.bin/mocha --harmony_arrow_functions tests"
   },
   "author": "Shane Tomlinson <shane@shanetomlinson.com>",
   "license": "MPL-2.0",

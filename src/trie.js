@@ -1,17 +1,21 @@
+'use strict';
 
 function isString(word) {
   return Object.prototype.toString.call(word) === '[object String]';
 }
 
-function TrieNode (letter) {
-  this.children = {};
-  this.letter = letter;
+class TrieNode {
+  constructor () {
+    this.children = new Map();
+  }
 }
 
-var Trie = {
-  _root: null,
+class Trie {
+  constructor() {
+    this._root = new TrieNode();
+  }
 
-  insert: function (word, root, value) {
+  insert (word, root, value) {
     if (! isString(word)) {
       throw new TypeError('word must be a string');
     }
@@ -20,18 +24,14 @@ var Trie = {
       throw new Error('word has no length');
     }
 
-    if (! this._root) {
-      this._root = new TrieNode();
-    }
-
     root = root || this._root;
     value = value || word;
 
     var letter = word.charAt(0);
-    var nextNode = root.children[letter];
+    var nextNode = root.children.get(letter);
     if (! nextNode) {
-      nextNode = new TrieNode(letter);
-      root.children[letter] = nextNode;
+      nextNode = new TrieNode();
+      root.children.set(letter, nextNode);
     }
 
     if (word.length === 1) {
@@ -40,9 +40,9 @@ var Trie = {
       var rest = word.slice(1);
       this.insert(rest, nextNode, value);
     }
-  },
+  }
 
-  find: function (word, root) {
+  find (word, root) {
     if (! isString(word)) {
       throw new TypeError('word must be a string');
     }
@@ -51,14 +51,10 @@ var Trie = {
       throw new Error('word has no length');
     }
 
-    if (! this._root) {
-      return false;
-    }
-
     root = root || this._root;
 
     var letter = word.charAt(0);
-    var nextNode = root.children[letter];
+    var nextNode = root.children.get(letter);
     if (! nextNode) {
       return false;
     }
@@ -66,16 +62,11 @@ var Trie = {
     if (word.length === 1) {
       return !! nextNode.value;
     } else {
-      var rest = word.slice(1);
-      return this.find(rest, nextNode);
+      return this.find(word.slice(1), nextNode);
     }
-  },
+  }
 
-  traverse: function (accumulator, root) {
-    if (! this._root) {
-      return [];
-    }
-
+  traverse (accumulator, root) {
     accumulator = accumulator || [];
     root = root || this._root;
 
@@ -83,10 +74,9 @@ var Trie = {
       accumulator.push(root.value);
     }
 
-    for (var letter in root.children) {
-      var nextNode = root.children[letter];
-      this.traverse(accumulator, nextNode);
-    }
+    root.children.forEach((nextNode, letter) => {
+      this.traverse(accumulator, nextNode)
+    }, this);
 
     return accumulator;
   }

@@ -5,7 +5,7 @@ describe('Trie', function () {
   var trie;
 
   beforeEach(function () {
-    trie = Object.create(Trie);
+    trie = new Trie();
   });
 
 
